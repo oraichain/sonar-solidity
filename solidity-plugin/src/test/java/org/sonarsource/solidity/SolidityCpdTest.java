@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
-import org.sonar.duplications.internal.pmd.TokensLine;
+import org.sonar.api.batch.sensor.cpd.internal.TokensLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -34,11 +34,12 @@ public class SolidityCpdTest {
 
   private InputFile createInputFile(String filename) {
     try {
-      return TestInputFileBuilder.create("module", filename)
-        .setModuleBaseDir(getModuleBaseDir().toPath())
-        .setCharset(StandardCharsets.UTF_8)
-        .setLanguage(Solidity.KEY)
-        .initMetadata(new String(java.nio.file.Files.readAllBytes(new File("src/test/resources/" + filename).toPath()), StandardCharsets.UTF_8)).build();
+      return TestInputFileBuilder.create("module", filename).setModuleBaseDir(getModuleBaseDir().toPath())
+          .setCharset(StandardCharsets.UTF_8).setLanguage(Solidity.KEY)
+          .initMetadata(
+              new String(java.nio.file.Files.readAllBytes(new File("src/test/resources/" + filename).toPath()),
+                  StandardCharsets.UTF_8))
+          .build();
     } catch (java.io.IOException e) {
       throw new IllegalStateException("File Not Found!", e);
     }

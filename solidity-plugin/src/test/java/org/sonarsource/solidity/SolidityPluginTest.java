@@ -3,6 +3,7 @@ package org.sonarsource.solidity;
 import org.junit.Before;
 import org.junit.Test;
 import org.sonar.api.Plugin;
+import org.sonar.api.SonarEdition;
 import org.sonar.api.SonarQubeSide;
 import org.sonar.api.SonarRuntime;
 import org.sonar.api.internal.SonarRuntimeImpl;
@@ -20,20 +21,16 @@ public class SolidityPluginTest {
   }
 
   @Test
-  public void count_plugin_extensions7_2() {
-    Plugin.Context context = setupContext(SonarRuntimeImpl.forSonarQube(Version.create(7, 2), SonarQubeSide.SERVER));
-    assertThat(context.getExtensions()).as("Number of extensions for SQ 7.2").hasSize(7);
-  }
-
-  @Test
   public void count_plugin_extensions() {
-    Plugin.Context context = setupContext(SonarRuntimeImpl.forSonarQube(Version.create(7, 1), SonarQubeSide.SERVER));
+    Plugin.Context context = setupContext(
+        SonarRuntimeImpl.forSonarQube(Version.create(7, 1), SonarQubeSide.SERVER, SonarEdition.COMMUNITY));
     assertThat(context.getExtensions()).as("Number of extensions for SQ 7.1").hasSize(6);
   }
 
   @Test
   public void count_plugin_extensions_sq6_7() {
-    Plugin.Context context = setupContext(SonarRuntimeImpl.forSonarQube(Version.create(6, 7), SonarQubeSide.SERVER));
+    Plugin.Context context = setupContext(
+        SonarRuntimeImpl.forSonarQube(Version.create(6, 7), SonarQubeSide.SERVER, SonarEdition.COMMUNITY));
     assertThat(context.getExtensions()).as("Number of extensions for SQ 6.7").hasSize(6);
   }
 

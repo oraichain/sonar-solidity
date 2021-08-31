@@ -6,6 +6,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.sonar.api.SonarEdition;
 import org.sonar.api.SonarQubeSide;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
@@ -34,47 +36,23 @@ public final class SoliumTestHelper {
     context.fileSystem().setWorkDir(workDir);
     Path filePath = projectDir.resolve("main.sol");
     InputFile mainInputFile = TestInputFileBuilder.create("module", projectDir.toFile(), filePath.toFile())
-      .setCharset(StandardCharsets.UTF_8)
-      .setLanguage("solidity")
-      .setContents("pragma solidity 0.4.24;\n" +
-        "\n" +
-        "contract AccessRestrictionPattern {\n" +
-        "\n" +
-        "    address public owner = msg.sender;\n" +
-        "    uint public lastOwnerChange = now;\n" +
-        "    \n" +
-        "    modifier onlyBy(address _account) {\n" +
-        "        require(msg.sender == _account);\n" +
-        "        _;\n" +
-        "    }\n" +
-        "    \n" +
-        "    modifier onlyAfter(uint _time) {\n" +
-        "        require(now >= _time);\n" +
-        "        _;\n" +
-        "    }\n" +
-        "    \n" +
-        "    modifier costs(uint _amount) {\n" +
-        "        require(msg.value >= _amount);\n" +
-        "        _;\n" +
-        "        if (msg.value > _amount) {\n" +
-        "            msg.sender.transfer(msg.value - _amount);\n" +
-        "        }\n" +
-        "    }\n" +
-        "    \n" +
-        "    function changeOwner(address _newOwner) public onlyBy(owner) {\n" +
-        "        owner = _newOwner;\n" +
-        "    }\n" +
-        "    \n" +
-        "    function buyContract() public payable onlyAfter(lastOwnerChange + 4 weeks) costs(1 ether) {\n" +
-        "        owner = msg.sender;\n" +
-        "        lastOwnerChange = now;\n" +
-        "    }\n" +
-        "}\n" +
-        "")
-      .setType(InputFile.Type.MAIN)
-      .build();
+        .setCharset(StandardCharsets.UTF_8).setLanguage("solidity")
+        .setContents("pragma solidity 0.4.24;\n" + "\n" + "contract AccessRestrictionPattern {\n" + "\n"
+            + "    address public owner = msg.sender;\n" + "    uint public lastOwnerChange = now;\n" + "    \n"
+            + "    modifier onlyBy(address _account) {\n" + "        require(msg.sender == _account);\n"
+            + "        _;\n" + "    }\n" + "    \n" + "    modifier onlyAfter(uint _time) {\n"
+            + "        require(now >= _time);\n" + "        _;\n" + "    }\n" + "    \n"
+            + "    modifier costs(uint _amount) {\n" + "        require(msg.value >= _amount);\n" + "        _;\n"
+            + "        if (msg.value > _amount) {\n" + "            msg.sender.transfer(msg.value - _amount);\n"
+            + "        }\n" + "    }\n" + "    \n"
+            + "    function changeOwner(address _newOwner) public onlyBy(owner) {\n" + "        owner = _newOwner;\n"
+            + "    }\n" + "    \n"
+            + "    function buyContract() public payable onlyAfter(lastOwnerChange + 4 weeks) costs(1 ether) {\n"
+            + "        owner = msg.sender;\n" + "        lastOwnerChange = now;\n" + "    }\n" + "}\n" + "")
+        .setType(InputFile.Type.MAIN).build();
     context.fileSystem().add(mainInputFile);
-    context.setRuntime(SonarRuntimeImpl.forSonarQube(Version.create(majorVersion, minorVersion), SonarQubeSide.SERVER));
+    context.setRuntime(SonarRuntimeImpl.forSonarQube(Version.create(majorVersion, minorVersion), SonarQubeSide.SERVER,
+        SonarEdition.COMMUNITY));
     return context;
   }
 }

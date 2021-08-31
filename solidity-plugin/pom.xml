@@ -2,22 +2,22 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.sonarsource.solidity</groupId>
-    <artifactId>sonar-solidity</artifactId>
-    <version>1.1-SNAPSHOT</version>
-  </parent>
+	<parent>
+		<groupId>org.sonarsource.solidity</groupId>
+		<artifactId>sonar-solidity</artifactId>
+		<version>1.1-SNAPSHOT</version>
+	</parent>
 
 	<artifactId>solidity-plugin</artifactId>
 	<packaging>sonar-plugin</packaging>
 
 	<name>solidity-plugin</name>
 	<description>Sonar-solidity</description>
-  <developers>
-    <developer>
-      <name>Agapiou Stylianos</name>
-    </developer>
-  </developers>
+	<developers>
+		<developer>
+			<name>Agapiou Stylianos</name>
+		</developer>
+	</developers>
 	<dependencies>
 		<dependency>
 			<groupId>org.sonarsource.sonarqube</groupId>
@@ -25,41 +25,46 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-    <groupId>${project.groupId}</groupId>
-       <artifactId>solidity-frontend</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-    <groupId>${project.groupId}</groupId>
-      <artifactId>solidity-checks</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+			<groupId>org.sonarsource.sonarqube</groupId>
+			<artifactId>sonar-plugin-api-impl</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>solidity-frontend</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>solidity-checks</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<dependency>
 			<!-- packaged with the plugin -->
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 			<scope>provided</scope>
 		</dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-all</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.assertj</groupId>
-      <artifactId>assertj-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.antlr</groupId>
-      <artifactId>antlr4</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr4</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
 		</dependency>
 		<!-- unit tests -->
 		<dependency>

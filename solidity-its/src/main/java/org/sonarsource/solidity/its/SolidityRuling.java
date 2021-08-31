@@ -19,6 +19,7 @@ import org.apache.commons.io.IOUtils;
 import org.sonar.api.batch.rule.ActiveRules;
 import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.internal.ActiveRulesBuilder;
+import org.sonar.api.batch.rule.internal.NewActiveRule;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
@@ -43,59 +44,45 @@ public class SolidityRuling {
     // ... no reason for a public constructor
   }
 
-  private static final String[] PROJECTS_TO_ANALYZE = {
-    "ethereum-api",
-    "Random-Files",
-    "aragonOS",
-    "ethorse-core",
-    "openzeppelin-solidity",
-    "kleros-interaction",
-    "pm-contracts",
-    "augur-core",
-    "standard-contracts"
-  };
+  private static final String[] PROJECTS_TO_ANALYZE = { "ethereum-api", "Random-Files", "aragonOS", "ethorse-core",
+      "openzeppelin-solidity", "kleros-interaction", "pm-contracts", "augur-core", "standard-contracts" };
 
   public static String[] getProjects() {
     return PROJECTS_TO_ANALYZE;
   }
 
   public static void collectSolidityFiles() {
-    Arrays.asList(getProjects())
-      .stream()
-      .forEach(projectName -> {
-        List<File> listFiles = new ArrayList<>();
-        try {
-          String path = String.format("%s%s", DIR, projectName);
-          Files.find(Paths.get(path),
-            Integer.MAX_VALUE,
-            (filePath, fileAttr) -> fileAttr.isRegularFile())
+    Arrays.asList(getProjects()).stream().forEach(projectName -> {
+      List<File> listFiles = new ArrayList<>();
+      try {
+        String path = String.format("%s%s", DIR, projectName);
+        Files.find(Paths.get(path), Integer.MAX_VALUE, (filePath, fileAttr) -> fileAttr.isRegularFile())
             .filter(file -> file.getFileName().toString().endsWith(".sol"))
             .forEach(file -> listFiles.add(file.toFile()));
-          sortList(listFiles);
-          filesToAnalyze.put(projectName, listFiles);
-        } catch (IOException e) {
-          LOG.debug(e.getMessage(), e);
-        }
-      });
+        sortList(listFiles);
+        filesToAnalyze.put(projectName, listFiles);
+      } catch (IOException e) {
+        LOG.debug(e.getMessage(), e);
+      }
+    });
   }
 
   public static void findDifferences() {
     filesToCompare.forEach((projectName, recordedIssues) -> {
-      recordedIssues.stream()
-        .forEach(issues -> {
-          String actualIssuePath = String.format("%s%s", SolidityRulingIts.ACTUAL_ISSUES,
+      recordedIssues.stream().forEach(issues -> {
+        String actualIssuePath = String.format("%s%s", SolidityRulingIts.ACTUAL_ISSUES,
             issues.toString().replaceAll(SolidityRulingIts.RECORD_ISSUES, ""));
-          try {
-            if (!FileUtils.contentEquals(new File(issues.toString()), new File(actualIssuePath))) {
-              List<String> lines = Arrays.asList("Differences: " + issues.toString() + " - " + actualIssuePath);
-              Files.write(Paths.get(String.format("%s%s", SolidityRulingIts.RECORD_ISSUES, "differences")), lines, StandardCharsets.UTF_8,
-                StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-            }
-          } catch (IOException e) {
-            LOG.debug(e.getMessage(), e);
+        try {
+          if (!FileUtils.contentEquals(new File(issues.toString()), new File(actualIssuePath))) {
+            List<String> lines = Arrays.asList("Differences: " + issues.toString() + " - " + actualIssuePath);
+            Files.write(Paths.get(String.format("%s%s", SolidityRulingIts.RECORD_ISSUES, "differences")), lines,
+                StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
           }
+        } catch (IOException e) {
+          LOG.debug(e.getMessage(), e);
+        }
 
-        });
+      });
     });
   }
 
@@ -108,21 +95,17 @@ public class SolidityRuling {
   }
 
   public static void collectFilesForIssues() {
-    Arrays.asList(getProjects())
-      .stream()
-      .forEach(projectName -> {
-        String path = String.format("%s%s", SolidityRulingIts.RECORD_ISSUES, projectName);
-        List<File> listFiles = new ArrayList<>();
-        try {
-          Files.find(Paths.get(path),
-            Integer.MAX_VALUE,
-            (filePath, fileAttr) -> fileAttr.isRegularFile())
+    Arrays.asList(getProjects()).stream().forEach(projectName -> {
+      String path = String.format("%s%s", SolidityRulingIts.RECORD_ISSUES, projectName);
+      List<File> listFiles = new ArrayList<>();
+      try {
+        Files.find(Paths.get(path), Integer.MAX_VALUE, (filePath, fileAttr) -> fileAttr.isRegularFile())
             .forEach(recordedIssues -> listFiles.add(recordedIssues.toFile()));
-          filesToCompare.put(projectName, listFiles);
-        } catch (IOException e) {
-          LOG.debug(e.getMessage(), e);
-        }
-      });
+        filesToCompare.put(projectName, listFiles);
+      } catch (IOException e) {
+        LOG.debug(e.getMessage(), e);
+      }
+    });
 
   }
 
@@ -159,8 +142,7 @@ public class SolidityRuling {
     ActiveRules activeRules = activeRules();
     CheckFactory checkFactory = new CheckFactory(activeRules);
     return checkFactory.<IssuableVisitor>create(SolidityRulesDefinition.REPO_KEY)
-      .addAnnotatedChecks((Iterable) CheckList.returnChecks())
-      .all();
+        .addAnnotatedChecks(CheckList.returnChecks()).all();
   }
 
   private static void sortList(List<File> listFiles) {
@@ -170,8 +152,9 @@ public class SolidityRuling {
   private static ActiveRules activeRules() {
     ActiveRulesBuilder activeRulesBuilder = new ActiveRulesBuilder();
     for (String ruleKey : RuleKeyList.returnChecks()) {
-      activeRulesBuilder.create(RuleKey.of(SolidityRulesDefinition.REPO_KEY, ruleKey))
-        .activate();
+      NewActiveRule rule = new NewActiveRule.Builder().setRuleKey(RuleKey.of(SolidityRulesDefinition.REPO_KEY, ruleKey))
+          .setName(ruleKey).build();
+      activeRulesBuilder.addRule(rule);
     }
     return activeRulesBuilder.build();
   }
